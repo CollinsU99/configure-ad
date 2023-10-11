@@ -26,7 +26,7 @@ This tutorial provides a step-by-step guide to implementing Active Directory on 
 - Ensure Connectivity between the client and Domain Controller
 - Install Active Directory on DC-1 (promote to Domain Controller)
 - Reconnect to DC-1 as Domain Controller (mydomain.com\labuser)
-- CreatE OUS named _EMPLOYEES and _ADMINS
+- Create OUs named _EMPLOYEES and _ADMINS
 - Create employee named jane doe (jane_admin)
 - Add jane_admin to the Domain Admins security group
 - Log out of DC-1 and log back in as "mydomain.com\jane_admin
@@ -382,7 +382,7 @@ Right-click "Users", You will notice that we are currently signed into DC-1 as "
 <img src="https://i.imgur.com/8IQmy0o.png" height="80%" width="80%" alt="img"/>
 </p>
 
-We will create another asministrative account that's tied to us as an individual, and then we will log out and log back in using the new administrative account. 
+We will create another asministrative account that's tied to us as an individual, and then we will log out and log back in using the new administrative account (jane_admin). 
 
 Click "_ADMINS", right-click on the empty space, click "New" > "User".
 
@@ -410,20 +410,29 @@ Right-click "jane doe" and click "Properties".
 <img src="https://i.imgur.com/E1AypOm.png" height="80%" width="80%" alt="img"/>
 </p>
 
-Click "Member Of" > "Add", type "Domain Admins" in the box, click "Check name" > "Ok" > "Apply" > "Ok".
+Click "Member Of" > "Add", type "Domain Admins" in the box, and click "Check name" > "Ok" > "Apply" > "Ok".
 
+<p align="center">
+<img src="https://i.imgur.com/PulUoYG.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Before we log out, opem command prompt and type "whoami" and press Enter, as show in the image above.
 
+We are signed in as "mydomain\labuser".
 
+<p align="center">
+<img src="https://i.imgur.com/guyoQEC.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Type "logoff" and press Enter to sign out from "mydomain\labuser".
 
+<p align="center">
+<img src="https://i.imgur.com/guyoQEC.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Let's log back in using the new administrative account (jane_admin). 
 
-
-
-
-
-
+Go to your Azure portal, and grab DC-1's public IP Address
 
 
 
