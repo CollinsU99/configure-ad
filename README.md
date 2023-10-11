@@ -708,6 +708,116 @@ Collapse "mydomain.com" and click "Users". You can see that "Domain Users" are t
 
 Double-click "Domain Users" and click "Members". "Members" contain all the users in the "Domain Users" group, as shown in the image above. Anyone in this group is allowed to log into Client-1's VM.
 
+<p align="center">
+<img src="https://i.imgur.com/hDlQlne.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We will now create a bunch of additional users and attempt to log into Client-1 with one of the users.
+
+In DC-1, search for "powershell_ise" and right-click "Windows PowerShell ISE", and click "Run as administrator", as shown in the image above.
+
+<p align="center">
+<img src="https://i.imgur.com/EhnNQQO.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Copy the script found in this repository: https://github.com/CollinsU99/Generate-Names-Create-Users.ps1.git and paste it in the "powershell ise" new file. 
+
+In PowerShell Ise, click the "create new file" icon located in the upper left corner, paste the script you copied in the new file, and click the green play button, as shown in the image above.
+
+NOTE: The script will create 10,000 random accounts in the "_EMPLOYEES" organizational unit in AD, and they will all have "Password1" as their password.
+
+<p align="center">
+<img src="https://i.imgur.com/3GIuUtV.png" height="80%" width="80%" alt="img"/>
+</p>
+
+As shown in the image above, the accounts are being created.
+
+<p align="center">
+<img src="https://i.imgur.com/LL3lWox.png" height="80%" width="80%" alt="img"/>
+</p>
+
+In Active Directory, right-click "_EMPLOYEES" and click "Refresh", and you will see a bunch of random accounts have been created.
+
+<p align="center">
+<img src="https://i.imgur.com/jJ3I3d2.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Double-click on any random name, click "Account", and copy the username of the account, and minimize DC-1
+
+We will use this username to log into Client-1 VM.
+
+<p align="center">
+<img src="https://i.imgur.com/wbQ6NWt.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open Client-1 VM, Click the Start Menu, click "jane doe", and click "Sign Out".
+
+<p align="center">
+<img src="https://i.imgur.com/7XcnGk6.png" height="80%" width="80%" alt="img"/>
+</p>
+
+In Azure portal, go to "virtual machines", click Client-1 VM, and copy it's public IP address.
+
+<p align="center">
+<img src="https://i.imgur.com/hcYAoBU.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open Remote Desktop, paste Client-1's public IP address, and click "Connect".
+
+Click "More choices" > "Use a different account", type the random username we created, and type "Password1" in the password box. Then, click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/eXQPCSI.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We are now connecting to one of the random accounts we created.
+
+NOTE: The account "bag.pilufa" has never logged into Client-1 before but is able to do so because it has been created as a user in the Domain Controller (DC-1).
+
+<p align="center">
+<img src="https://i.imgur.com/fY3GPxW.png" height="80%" width="80%" alt="img"/>
+</p>
+
+To confirm, open command prompt in Client-1. run the commands "hostname" and "whoami".
+
+As shown in the image above, "bag.pilufa" is logged in as a user in Client-1.
+
+<p align="center">
+<img src="https://i.imgur.com/5b5c8HP.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click the pinned File Explorer app on the taskbar. Click "This PC" and double-click the C drive.
+
+<p align="center">
+<img src="https://i.imgur.com/hawpjni.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click the "Users" folder.
+
+<p align="center">
+<img src="https://i.imgur.com/CyHx22J.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Anytime a new user logs into Client-1, a new folder will be created.
+
+As shown in the image above, the folders "labuser", "jane_admin", and "bag.pilufa" were created because we have logged in to Client-1 with those accounts before.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
