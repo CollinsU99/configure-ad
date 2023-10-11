@@ -30,6 +30,7 @@ This tutorial provides a step-by-step guide to implementing Active Directory on 
 - Create employee named jane doe (jane_admin)
 - Add jane_admin to the Domain Admins security group
 - Log out of DC-1 and log back in as "mydomain.com\jane_admin
+- Set Client-1's DNS settings to the Domain Controllers (DC-1) private IP address
 - Join Client-1 to your domain (mydomain.com)
 - Setup Remote Desktop for non-administrative users on Client-1
 - Create a bunch of additional users and attempt to log into client-1 with one of the users
@@ -382,21 +383,21 @@ Right-click "Users", You will notice that we are currently signed into DC-1 as "
 <img src="https://i.imgur.com/8IQmy0o.png" height="80%" width="80%" alt="img"/>
 </p>
 
-We will create another asministrative account that's tied to us as an individual, and then we will log out and log back in using the new administrative account (jane_admin). 
+We will create another administrative account that's tied to us as individuals, and then we will log out and log back in using the new administrative account (jane_admin).
 
-Click "_ADMINS", right-click on the empty space, click "New" > "User".
+Click "_ADMINS", right-click on the empty space, and click "New" > "User".
 
 <p align="center">
 <img src="https://i.imgur.com/9F9piEj.png" height="80%" width="80%" alt="img"/>
 </p>
 
-Use "jane" as first name, "doe" as last name, type in full name. Use "jane_admin" as logon name and click Next.
+Use "jane" as the first name, "doe" as the last name, and type in the full name. Use "jane_admin" as the login name and click Next.
 
 <p align="center">
 <img src="https://i.imgur.com/pQ62Vxu.png" height="80%" width="80%" alt="img"/>
 </p>
 
-We will use "Password1" a spassword, only check "Password never expires" box, and click "Next" > "Finish".
+We will use "Password1" as the password, only check "Password never expires" box, and click "Next" > "Finish".
 
 <p align="center">
 <img src="https://i.imgur.com/aidlPL1.png" height="80%" width="80%" alt="img"/>
@@ -427,15 +428,210 @@ We are signed in as "mydomain\labuser".
 Type "logoff" and press Enter to sign out from "mydomain\labuser".
 
 <p align="center">
-<img src="https://i.imgur.com/guyoQEC.png" height="80%" width="80%" alt="img"/>
+<img src="https://i.imgur.com/yve1bwx.png" height="80%" width="80%" alt="img"/>
 </p>
 
 Let's log back in using the new administrative account (jane_admin). 
 
-Go to your Azure portal, and grab DC-1's public IP Address
+Go to your Azure portal and grab DC-1's public IP Address
 
+<p align="center">
+<img src="https://i.imgur.com/dz8DfzZ.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Paste the public IP address and click "Connect".
 
+<p align="center">
+<img src="https://i.imgur.com/0c272w2.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "More choices" > "Use a different account", use "mydomain.com\jane_admin" as the username, type the password we created for jane_admin (Password1), and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/NA9QeOz.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Yes".
+
+<p align="center">
+<img src="https://i.imgur.com/OSKWWYG.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We are now signed as jane doe. To confirm, open the command prompt, type "whoami", and click Enter.
+
+As shown in the image above, we are signed in as "jane_admin (jane doe) who is a member of "mydomain".
+
+Type "hostname" and click Enter. You can see we are in DC-1 VM. Exit out of the command prompt and minimize DC-1's VM.
+
+<p align="center">
+<img src="https://i.imgur.com/7XcnGk6.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Next, let's set Client-1's DNS settings to point to the Domain Controllers (DC-1) private IP address.
+
+This will let Client-1 join DC-1's domain (mydomain.com). Thereby letting us log into Client-1's VM as "jane doe" (jane_admin)
+
+NOTE: Currently, Client-1's DNS is pointing to the Azure-assigned DNS server. To join DC-1's domain (mydomain.com), we need to configure Client-1 to use DC-1's private IP address as its DNS server instead. This is because the domain controller (DC-1) knows what "mydomain.com is.
+
+Before we configure Client-1's DNS, let's attempt to join it to the domain. Let's log into Client-1 as the original admin account (labuser).
+
+As shown in the image above, go to Azure portal and copy Client-1's public IP address.
+
+<p align="center">
+<img src="https://i.imgur.com/ozCVl6k.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open Remote Deskstop, paste Client-1's public IP address, and click "Connect".
+
+<p align="center">
+<img src="https://i.imgur.com/pXeOCVf.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Type in the password and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/p6Qb1ny.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Yes".
+
+<p align="center">
+<img src="https://i.imgur.com/hqBvyEB.png" height="80%" width="80%" alt="img"/>
+</p>
+
+To join the domain, right-click the Start Menu and click "System".
+
+<p align="center">
+<img src="https://i.imgur.com/NlvckON.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Rename this PC (Advanced)" > "Change". Select "Domain", type in the box "mydomain.com", and click "Ok".
+
+NOTE: I mistakenly typed "domain.com" instead of "mydomain.com". But we still get the message below regardless.
+
+We got a message saying "mydomain.com could not be contacted". Click "Ok" > "Cancel" > "Cancel".
+
+<p align="center">
+<img src="https://i.imgur.com/EggybQN.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Let's now configure Client-1 to use DC-1's private IP address as its DNS server.
+
+Go to your Azure portal. In virtual machines, click "DC-1".
+
+<p align="center">
+<img src="https://i.imgur.com/gViKx2h.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Copy DC-1's private IP address.
+
+<p align="center">
+<img src="https://i.imgur.com/FWvuMXc.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Go back virtual machine and click "Client-1".
+
+<p align="center">
+<img src="https://i.imgur.com/DoBQ3O6.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Networking".
+
+<p align="center">
+<img src="https://i.imgur.com/hKcQAmB.png" height="80%" width="80%" alt="img"/>
+</p>
+
+In Networking, click Client-1's Network Interface.
+
+<p align="center">
+<img src="https://i.imgur.com/ntpngRl.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "DNS Servers".
+
+<p align="center">
+<img src="https://i.imgur.com/tYBma4J.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Select "Custom", paste DC-1's private IP address, and click "Save".
+
+We've now configured Client-1's DNS to DC-1's private IP.
+
+<p align="center">
+<img src="https://i.imgur.com/FWvuMXc.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Go back to virtual machines and click "Client-1".
+
+<p align="center">
+<img src="https://i.imgur.com/N0sH6bW.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Restart" and click "Yes" at the prompt (this will flush Client-1's DNS cache).
+
+<p align="center">
+<img src="https://i.imgur.com/7XcnGk6.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Let's re-attempt to join Client-1 to the DC-1 domain. 
+
+As shown in the image above, go to Azure portal and copy Client-1's public IP address.
+
+<p align="center">
+<img src="https://i.imgur.com/ozCVl6k.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open Remote Deskstop, paste Client-1's public IP address, and click "Connect".
+
+<p align="center">
+<img src="https://i.imgur.com/pXeOCVf.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Type in the password and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/p6Qb1ny.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Yes".
+
+<p align="center">
+<img src="https://i.imgur.com/qIVbBRv.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open command prompt and type "ipconfig /all". 
+
+As shown in the image above, you can see that Client-1's DNS server has now been configured to DC-1's private IP address.
+
+Ping the IP address "ping 10.0.0.4". We got replies from it.
+
+<p align="center">
+<img src="https://i.imgur.com/hqBvyEB.png" height="80%" width="80%" alt="img"/>
+</p>
+
+To join the domain, right-click the Start Menu and click "System".
+
+<p align="center">
+<img src="https://i.imgur.com/LLmJxVx.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Rename this PC (Advanced)" > "Change". Select "Domain", type "mydomain.com" and click "Ok.
+
+We didn't get an error message like we got earlier. Instaed it's prompting us for our username and password.
+
+Type "mydomain.com\jane_admin" as username, and "Password1" as password. Click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/WWLbfVX.png" height="80%" width="80%" alt="img"/>
+</p>
+
+A new window will pop up. Click "Ok" > "Ok
+
+<p align="center">
+<img src="https://i.imgur.com/kvdQPZQ.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Restart Now".
 
 
 
