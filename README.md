@@ -32,6 +32,7 @@ This tutorial provides a step-by-step guide to implementing Active Directory on 
 - Log out of DC-1 and log back in as "mydomain.com\jane_admin
 - Set Client-1's DNS settings to the Domain Controllers (DC-1) private IP address
 - Join Client-1 to your domain (mydomain.com)
+- Log into Client-1's VM as jane doe (mydomain.com\jane_admin)
 - Setup Remote Desktop for non-administrative users on Client-1
 - Create a bunch of additional users and attempt to log into client-1 with one of the users
 
@@ -631,13 +632,81 @@ A new window will pop up. Click "Ok" > "Ok
 <img src="https://i.imgur.com/kvdQPZQ.png" height="80%" width="80%" alt="img"/>
 </p>
 
-Click "Restart Now".
+Click "Restart Now". You will be disconnected from Client-1's VM.
 
+Go back to virtual machines in Azure, click Client-1, and copy it's public IP address.
 
+<p align="center">
+<img src="https://i.imgur.com/ozCVl6k.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Open Remote Desktop, paste Client-1's public IP address, and click "Connect".
 
+<p align="center">
+<img src="https://i.imgur.com/i5beMA2.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Instead of logging in as "labuser", click "More choices" > "Use a different account". Type "mydomain.com\jane_admin" as username and "Password1" as password.
 
+<p align="center">
+<img src="https://i.imgur.com/p6Qb1ny.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Yes".
+
+<p align="center">
+<img src="https://i.imgur.com/PjQa0Ka.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open command prompt, and run the command "hostname" and "whoami".
+
+As you can see, we are able to log into Client-1's VM as jane doe (jane_admin), even though we've never logged into Client-1 before as jane doe (jane_admin)
+
+This is because Client-1 is a member of the domain (DC-1) and jane_admin is an admin account within the domain.
+
+<p align="center">
+<img src="https://i.imgur.com/hqBvyEB.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Next, we will setup a remote deskstop for non-administrative users on Client-1.
+
+Right-click the Start Menu and click "System".
+
+<p align="center">
+<img src="https://i.imgur.com/5hpVowS.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Remote Desktop".
+
+<p align="center">
+<img src="https://i.imgur.com/pf2A6AK.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Select users that can remotely access this PC".
+
+<p align="center">
+<img src="https://i.imgur.com/2fhQulJ.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Add", type "Domain Users" in the box, click "Check Names", and click "Ok" > "Ok".
+
+This will allow all domain users and non-adminstrative users to log into Client-1's VM
+
+Minimize Client-1's VM and open DC-1's VM.
+
+<p align="center">
+<img src="https://i.imgur.com/xB40N1G.png" height="80%" width="80%" alt="img"/>
+</p>
+
+In DC-1, click the Start Menu, collapse "Windows Administrative Tools", and click "Active Directory Users and Computers".
+
+<p align="center">
+<img src="https://i.imgur.com/vfiOL30.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Collapse "mydomain.com" and click "Users". You can see that "Domain Users" are the group we've just given access to Client-1 VM.
+
+Double-click "Domain Users" and click "Members". "Members" contain all the users in the "Domain Users" group, as shown in the image above. Anyone in this group is allowed to log into Client-1's VM.
 
 
 
