@@ -22,9 +22,14 @@ This tutorial provides a step-by-step guide to implementing Active Directory on 
 - Setup Resources in Azure (DC-1 VM and Client-1 VM)
 - Set DC-1 NIC private IP from dynamic to static
 - Log into Client-1 VM via Remote Desktop and ping DC-1's IP address
+- Log into DC-1 VM via Remote Desktop and allow ICMP traffic
 - Ensure Connectivity between the client and Domain Controller
-- Install Active Directory
-- Create an Admin and Normal User Account in AD
+- Install Active Directory on DC-1 (promote to Domain Controller)
+- Reconnect to DC-1 as Domain Controller (mydomain.com\labuser)
+- CreatE OUS named _EMPLOYEES and _ADMINS
+- Create employee named jane doe (jane_admin)
+- Add jane_admin to the Domain Admins security group
+- Log out of DC-1 and log back in as "mydomain.com\jane_admin
 - Join Client-1 to your domain (mydomain.com)
 - Setup Remote Desktop for non-administrative users on Client-1
 - Create a bunch of additional users and attempt to log into client-1 with one of the users
@@ -171,21 +176,241 @@ Note down DC-1's Private IP Address.
 
 Go back to Client-1's VM, select "No" for all the options, and click the "Accept" button.
 
+<p align="center">
+<img src="https://i.imgur.com/lc45ZoW.png" height="80%" width="80%" alt="img"/>
+</p>
 
+On the search box, type "cmd", and click "Open".
 
+<p align="center">
+<img src="https://i.imgur.com/BMwpabu.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Type "ping -t 10.0.0.4" to ping DC-1's private IP address.
 
+As shown in the image above, the ping got timed out. This is because DC-1's Windows firewall is blocking ICMP traffic.
 
+Go ahead and minimize Client-1's VM.
 
+<p align="center">
+<img src="https://i.imgur.com/Fz35nGv.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Let's log into DC-1 via Remote Desktop.
 
+Go back to your Azure portal and copy DC-1's Public IP address.
 
+<p align="center">
+<img src="https://i.imgur.com/dz8DfzZ.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Open Remote Desktop and log into DC-1's VM by pasting the public Ip address and clicking "Connect". 
 
+<p align="center">
+<img src="https://i.imgur.com/1rDG2c0.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Log in just like we did for Client-1.
 
+<p align="center">
+<img src="https://i.imgur.com/vXbs4sG.png" height="80%" width="80%" alt="img"/>
+</p>
 
+Click the "Yes" button.
 
+<p align="center">
+<img src="https://i.imgur.com/EEtpuNt.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Let's allow ICMP traffic on DC-1.
+
+In the search box, type "wf.msc", and click on it.
+
+<p align="center">
+<img src="https://i.imgur.com/WdzS9zC.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Inbound Rule" in the left pane, then click "Protocol" to sort by protocol. Right-click on both "ICMPv4-in" echo requests and click "Enable rule".
+
+<p align="center">
+<img src="https://i.imgur.com/DKsGL44.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Go back to Client-1's VM and observe that the pings are now working after we enabled the ICMP echo request on DC-1. Press "CTRL + C" on your keyboard to stop the perpetual ping, close the cmd application by clicking "X", and minimize Client-1's VM.
+
+NOTE: We did this to ensure that Client-1 and DC-1 could communicate with each other.
+
+Next, let's install Active Directory on DC-1.
+
+<p align="center">
+<img src="https://i.imgur.com/OmwrUEy.png" height="80%" width="80%" alt="img"/>
+</p>
+
+NOTE: Just so you don't get confused between DC-1 VM and Client-1 VM, click on any VM, open cmd, and type "hostname", Click Enter.
+
+As shown in the image above, we are on DC-1's VM.
+
+<p align="center">
+<img src="https://i.imgur.com/Nvlpnnf.png" height="80%" width="80%" alt="img"/>
+</p>
+
+On DC-1 Vm, click the Start menu and click "Server Manager".
+
+<p align="center">
+<img src="https://i.imgur.com/h7rSD6a.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Add roles and features".
+
+<p align="center">
+<img src="https://i.imgur.com/tTpSsl5.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Next" > "Next" > "Next".
+
+<p align="center">
+<img src="https://i.imgur.com/EahtxUJ.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Active Directory Domain Services". 
+
+<p align="center">
+<img src="https://i.imgur.com/KwJPlmY.png" height="80%" width="80%" alt="img"/>
+</p>
+
+A new window will pop up. Click "Add Features".
+
+<p align="center">
+<img src="https://i.imgur.com/tapsNSk.png" height="80%" width="80%" alt="img"/>
+</p>
+
+In the next few windows, click "Next" > "Next" > "Next" > "Install".
+
+<p align="center">
+<img src="https://i.imgur.com/KEEsm8x.png" height="80%" width="80%" alt="img"/>
+</p>
+
+When Active Directory is done installing, click the "close" button.
+
+<p align="center">
+<img src="https://i.imgur.com/zBgtUvK.png" height="80%" width="80%" alt="img"/>
+</p>
+
+On Server Manager, click the flag icon and click "Promote this server to a domain controller".
+
+<p align="center">
+<img src="https://i.imgur.com/WfwcBlA.png" height="80%" width="80%" alt="img"/>
+</p>
+
+A new window will pop up. Select "Add a new forcast" and name your root domain "mydomain.com" (you can change this to your name if you want). Click "Next".
+
+<p align="center">
+<img src="https://i.imgur.com/m83D8tC.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Type "Password1" in the Password and Confirm Password box, and click "Next" > "Next" > "Next" > "Next" > "Next" > "Install". 
+
+NOTE: After Active Directory is installed, you will be disconnected from DC-1's VM. If this happens, just go back your Azure portal, grab your DC-1's public IP address.
+
+<p align="center">
+<img src="https://i.imgur.com/9scInGF.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Open Remote Deskstop, paste DC-1's public IP address, and click "Connect".
+
+<p align="center">
+<img src="https://i.imgur.com/Rl9yLBg.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "More choices" > "Use a different account". 
+
+Since DC-1 is now a Domain Controller, we will log in using FQDN (Fully Qualified Domain Name). Type in "mydomain.com\labuser" as username and the password we used when we were creating DC-1's VM in Azure and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/NA9QeOz.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Yes".
+
+<p align="center">
+<img src="https://i.imgur.com/TinijCf.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Type "active directory" in the serach box, and click "Active Directory Users nad Computers".
+
+<p align="center">
+<img src="https://i.imgur.com/YBlzBaD.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We will go ahead and create our Organizational Units (OU).
+
+As shown in the image above, right-click "mydomain.com", click "New", and click "Organizational Unit".
+
+<p align="center">
+<img src="https://i.imgur.com/eshE7Kr.png" height="80%" width="80%" alt="img"/>
+</p>
+
+On the new window, type "_EMPLOYEES", and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/YBlzBaD.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Let's create another one.
+
+Right-click "mydomain.com", click "New", and click "Organizational Unit".
+
+<p align="center">
+<img src="https://i.imgur.com/tlwKpYF.png" height="80%" width="80%" alt="img"/>
+</p>
+
+On the new window, type "_ADMINS", and click "Ok".
+
+<p align="center">
+<img src="https://i.imgur.com/tJl1qZv.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Right-click "mydomain.com, and click "Refresh". As shown in the image above, you can see the two OUs we created are now at the top.
+
+<p align="center">
+<img src="https://i.imgur.com/VKKkYiO.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Right-click "Users", You will notice that we are currently signed into DC-1 as "labuser".
+
+<p align="center">
+<img src="https://i.imgur.com/8IQmy0o.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We will create another asministrative account that's tied to us as an individual, and then we will log out and log back in using the new administrative account. 
+
+Click "_ADMINS", right-click on the empty space, click "New" > "User".
+
+<p align="center">
+<img src="https://i.imgur.com/9F9piEj.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Use "jane" as first name, "doe" as last name, type in full name. Use "jane_admin" as logon name and click Next.
+
+<p align="center">
+<img src="https://i.imgur.com/pQ62Vxu.png" height="80%" width="80%" alt="img"/>
+</p>
+
+We will use "Password1" a spassword, only check "Password never expires" box, and click "Next" > "Finish".
+
+<p align="center">
+<img src="https://i.imgur.com/aidlPL1.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Let's make "jane doe" a domain admin by assigning it to the domain admins group.
+
+Right-click "jane doe" and click "Properties".
+
+<p align="center">
+<img src="https://i.imgur.com/E1AypOm.png" height="80%" width="80%" alt="img"/>
+</p>
+
+Click "Member Of" > "Add", type "Domain Admins" in the box, click "Check name" > "Ok" > "Apply" > "Ok".
 
 
 
