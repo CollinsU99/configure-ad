@@ -3,7 +3,7 @@
 </p>
 
 <h1>Active Directory Deployed in the Cloud (Azure)</h1>
-This tutorial provides a step-by-step guide to implementing Active Directory on Azure Virtual Machines.<br />
+This lab provides a step-by-step guide to implementing Active Directory on Azure Virtual Machines.<br />
 
 <h2>Environments and Technologies Used</h2>
 
